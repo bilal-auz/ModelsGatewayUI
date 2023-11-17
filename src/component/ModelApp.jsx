@@ -48,6 +48,13 @@ function ModelApp({ id, removeModel }) {
     }
   };
 
+  const loadExample = () => {
+    setInputQuestion("what is the abbreviation for Machine Learning?");
+    setInputContext(
+      "Machine learning (ML) is the scientific study of algorithms and statistical models that computer systems use to progressively improve their performance on a specific task. Machine learning algorithms build a mathematical model of sample data, known as 'training data', in order to make predictions or decisions without being explicitly programmed to perform the task. Machine learning algorithms are used in the applications of email filtering, detection of network intruders, and computer vision, where it is infeasible to develop an algorithm of specific instructions for performing the task. Machine learning is closely related to computational statistics, which focuses on making predictions using computers. The study of mathematical optimization delivers methods, theory, and application domains to the field of machine learning. Data mining is a field of study within machine learning and focuses on exploratory data analysis through unsupervised learning. In its application across business problems, machine learning is also referred to as predictive analytics."
+    );
+  };
+
   return (
     <div className="w-72">
       <p className="text-[#333333] font-bold text-xl mb-2">Model #{id}</p>
@@ -72,11 +79,23 @@ function ModelApp({ id, removeModel }) {
               Choose here
             </option>
             {models.map((model) => (
-              <option className="bg-grey-200" value={model.id}>
+              <option
+                className="bg-grey-200"
+                value={model.id}
+                disabled={model.available}
+              >
                 {model.name}
               </option>
             ))}
           </select>
+        </div>
+        <div className="mb-2 w-full flex flex-row justify-start">
+          <button
+            onClick={loadExample}
+            className="btn btn-link btn-xs text-[#333333] italic underline-offset-1"
+          >
+            example...
+          </button>
         </div>
 
         <input
