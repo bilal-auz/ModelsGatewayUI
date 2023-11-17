@@ -1,14 +1,26 @@
 import React, { useState } from "react";
 import axios from "axios";
 
+import { models } from "../assets/available-models";
+
 function ModelApp({ id, removeModel }) {
   const [answer, setAnswer] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [inputContext, setInputContext] = useState("");
   const [inputQuestion, setInputQuestion] = useState("");
+  const [QA_Model, setQA_Model] = useState("");
+  const [error, setError] = useState(false);
 
   const handleProcess = async () => {
+    setError(false); //remove the error sign
     setIsLoading(true);
+
+    if (QA_Model === "") return setError(true);
+
+    const target_model = models.find(
+      (model) => model.id === QA_Model
+    ).HuggingFace_Link;
+
     try {
       const config = {
         headers: {
@@ -17,8 +29,8 @@ function ModelApp({ id, removeModel }) {
 
         params: {
           context: inputContext,
-
           question: inputQuestion,
+          model_name: target_model,
         },
       };
 
@@ -47,12 +59,23 @@ function ModelApp({ id, removeModel }) {
           onClick={removeModel}
         />
         <div className="mb-5">
-          <select className="select select-bordered w-full max-w-xs border-[#383838] bg-transparent text-[#383838]">
-            <option className="bg-grey-200">
-              bert-large-uncased-whole-word-masking-finetuned-squad
+          <select
+            className={
+              (error &&
+                "select select-bordered w-full max-w-xs border-[#8f0709] bg-transparent text-[#383838]") ||
+              "select select-bordered w-full max-w-xs border-[#383838] bg-transparent text-[#383838]"
+            }
+            value={QA_Model}
+            onChange={(e) => setQA_Model(e.target.value)}
+          >
+            <option value={""} selected disabled hidden>
+              Choose here
             </option>
-            <option disabled>bert-base-cased (Upcoming)</option>
-            <option disabled>bert-base-uncased (Upcoming)</option>
+            {models.map((model) => (
+              <option className="bg-grey-200" value={model.id}>
+                {model.name}
+              </option>
+            ))}
           </select>
         </div>
 
