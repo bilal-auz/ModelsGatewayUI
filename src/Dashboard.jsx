@@ -27,12 +27,14 @@ function Dashboard() {
           {models.map(({ id }) => (
             <ModelApp key={id} id={id} removeModel={() => removeModel(id)} />
           ))}
-          <img
-            className="w-10"
-            onClick={addModel}
-            src="assets/add-icon.svg"
-            alt=""
-          />
+          {models.length < 3 && (
+            <img
+              className="w-10"
+              onClick={addModel}
+              src="assets/add-icon.svg"
+              alt=""
+            />
+          )}
         </div>
       </div>
     </div>
