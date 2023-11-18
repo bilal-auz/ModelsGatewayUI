@@ -20,7 +20,7 @@ export const models = [
   {
     id: "4",
     name: "BERT Base Cased",
-    HuggingFace_Link: "bert-base-cased",
-    available: true,
+    HuggingFace_Link: "deepset/bert-base-cased-squad2",
+    available: false,
   },
 ];

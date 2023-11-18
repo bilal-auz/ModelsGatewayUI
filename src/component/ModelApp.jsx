@@ -1,6 +1,5 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import axios from "axios";
-
 import { models } from "../assets/available-models";
 
 function ModelApp({ id, removeModel }) {
@@ -8,6 +7,7 @@ function ModelApp({ id, removeModel }) {
   const [isLoading, setIsLoading] = useState(false);
   const [inputContext, setInputContext] = useState("");
   const [inputQuestion, setInputQuestion] = useState("");
+  const contextRef = useRef(null);
   const [QA_Model, setQA_Model] = useState("");
   const [error, setError] = useState(false);
 
@@ -55,8 +55,18 @@ function ModelApp({ id, removeModel }) {
     );
   };
 
+  useEffect(() => {
+    const { style, scrollHeight } = contextRef.current;
+    if (style) {
+      style.height = "fit-content";
+
+      style.height = Math.min(scrollHeight, 160) + "px";
+      style.overflowY = Math.min(scrollHeight, 160) === 160 ? "auto" : "hidden";
+    }
+  }, [inputContext]);
+
   return (
-    <div className="w-72">
+    <div className="w-[45%]">
       <p className="text-[#333333] font-bold text-xl mb-2">Model #{id}</p>
       <div className="flex flex-col items-center border-solid border-2 border-[#333333] rounded-md p-7 indicator w-auto">
         <img
@@ -65,7 +75,7 @@ function ModelApp({ id, removeModel }) {
           alt=""
           onClick={removeModel}
         />
-        <div className="mb-5">
+        <div className="mb-5 w-full">
           <select
             className={
               (error &&
@@ -94,21 +104,23 @@ function ModelApp({ id, removeModel }) {
             onClick={loadExample}
             className="btn btn-link btn-xs text-[#333333] italic underline-offset-1"
           >
-            example...
+            use example...
           </button>
         </div>
 
         <input
           type="text"
           placeholder="Question?"
-          className="input input-bordered input-md w-full max-w-xs mb-3 border-[#383838] bg-transparent text-[#383838] placeholder:text-[#383838]"
+          className="input input-bordered input-md w-full mb-3 border-[#383838] bg-transparent text-[#383838] placeholder:text-[#383838]"
           value={inputQuestion}
           onChange={(e) => setInputQuestion(e.target.value)}
         />
         <textarea
           placeholder="Context"
-          className="textarea textarea-bordered textarea-md leading-normal w-full max-w-xs border-[#383838] bg-transparent text-[#383838] placeholder:text-[#383838]"
+          className="textarea textarea-bordered textarea-md leading-normal w-full h-auto max-h-40 min-h-28 border-[#383838] bg-transparent text-[#383838] placeholder:text-[#383838] "
+          rows={1}
           value={inputContext}
+          ref={contextRef}
           onChange={(e) => setInputContext(e.target.value)}
         ></textarea>
 
