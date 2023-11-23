@@ -22,6 +22,9 @@ function ModelApp({ id, removeModel }) {
     ).HuggingFace_Link;
 
     try {
+      const base_url =
+        process.env.REACT_APP_API_URL || "http://localhost:8000/api";
+
       const config = {
         headers: {
           "Content-Type": "application/json",
@@ -35,7 +38,7 @@ function ModelApp({ id, removeModel }) {
       };
 
       const { data } = await axios.get(
-        process.env.REACT_APP_API_ENDPOINT + "/model/huggingface/bert-large",
+        base_url + "/model/huggingface/bert-large",
         config
       );
 
