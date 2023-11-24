@@ -15,11 +15,12 @@ function ModelApp({ id, removeModel }) {
     setError(false); //remove the error sign
     setIsLoading(true);
 
-    if (QA_Model === "") return setError(true);
+    if (QA_Model === "") {
+      setIsLoading(false);
+      return setError(true);
+    }
 
-    const target_model = models.find(
-      (model) => model.id === QA_Model
-    ).HuggingFace_Link;
+    const target_model = models.find((model) => model.id === QA_Model);
 
     try {
       const base_url =
@@ -33,12 +34,12 @@ function ModelApp({ id, removeModel }) {
         params: {
           context: inputContext,
           question: inputQuestion,
-          model_name: target_model,
+          model_name: target_model.HuggingFace_Link,
         },
       };
 
       const { data } = await axios.get(
-        base_url + "/model/huggingface/bert-large",
+        base_url + `/model/${target_model.api_endpoint}`,
         config
       );
 
@@ -59,12 +60,17 @@ function ModelApp({ id, removeModel }) {
   };
 
   useEffect(() => {
-    const { style, scrollHeight } = contextRef.current;
-    if (style) {
-      style.height = "fit-content";
+    try {
+      const { style, scrollHeight } = contextRef.current;
+      if (style) {
+        style.height = "fit-content";
 
-      style.height = Math.min(scrollHeight, 160) + "px";
-      style.overflowY = Math.min(scrollHeight, 160) === 160 ? "auto" : "hidden";
+        style.height = Math.min(scrollHeight, 160) + "px";
+        style.overflowY =
+          Math.min(scrollHeight, 160) === 160 ? "auto" : "hidden";
+      }
+    } catch (error) {
+      console.log(error);
     }
   }, [inputContext]);
 
@@ -118,14 +124,16 @@ function ModelApp({ id, removeModel }) {
           value={inputQuestion}
           onChange={(e) => setInputQuestion(e.target.value)}
         />
-        <textarea
-          placeholder="Context"
-          className="textarea textarea-bordered textarea-md leading-normal w-full h-auto max-h-40 min-h-28 border-[#383838] bg-transparent text-[#383838] placeholder:text-[#383838] "
-          rows={1}
-          value={inputContext}
-          ref={contextRef}
-          onChange={(e) => setInputContext(e.target.value)}
-        ></textarea>
+        {models.find((model) => model.id === QA_Model)?.type === "QA" && (
+          <textarea
+            placeholder="Context"
+            className="textarea textarea-bordered textarea-md leading-normal w-full h-auto max-h-40 min-h-28 border-[#383838] bg-transparent text-[#383838] placeholder:text-[#383838] "
+            rows={1}
+            value={inputContext}
+            ref={contextRef}
+            onChange={(e) => setInputContext(e.target.value)}
+          ></textarea>
+        )}
 
         <div className="flex flex-row mt-5">
           <p className="text-sm font-bold text-[#333333]">Answer: </p>
